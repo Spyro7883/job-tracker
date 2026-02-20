@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -11,4 +5,76 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum ApplicationStatus {
+  Draft
+  Applied
+  Interview
+  Offer
+  Rejected
+  Archived
+}
+
+enum ReminderType {
+  Email
+  Call
+  DM
+  Other
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  website   String?
+  location  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications Application[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  userId    String
+  companyId String
+  roleTitle String
+  status    ApplicationStatus @default(Draft)
+  source    String?
+  appliedAt DateTime
+  salaryMin Int?
+  salaryMax Int?
+  jobUrl    String?
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reminders Reminder[]
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+}
+
+model Reminder {
+  id            String       @id @default(cuid())
+  userId        String
+  applicationId String
+  dueAt         DateTime
+  type          ReminderType @default(Email)
+  done          Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([applicationId])
+  @@index([dueAt])
 }
