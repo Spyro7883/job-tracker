@@ -1,3 +1,11 @@
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import ApplicationForm from "@/components/applications/application-form";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export default async function Page({
     params,
 }: {
@@ -5,5 +13,70 @@ export default async function Page({
 }) {
     const { id } = await Promise.resolve(params);
 
-    return <div className="p-6">TODO: Application detail: {id}</div>;
+    const { userId } = await auth();
+    if (!userId) return null;
+
+    const [app, companies] = await prisma.$transaction([
+        prisma.application.findFirst({
+            where: { id, userId },
+            include: { company: true },
+        }),
+        prisma.company.findMany({
+            where: { userId },
+            orderBy: { updatedAt: "desc" },
+            select: { id: true, name: true },
+            take: 200,
+        }),
+    ]);
+
+    if (!app) {
+        return (
+            <div className="p-6">
+                <p className="text-sm opacity-80">Not found.</p>
+                <Link className="underline" href="/app/applications">
+                    Back
+                </Link>
+            </div>
+        );
+    }
+
+    const appliedAt = new Date(app.appliedAt);
+    const y = appliedAt.getUTCFullYear();
+    const m = String(appliedAt.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(appliedAt.getUTCDate()).padStart(2, "0");
+
+    return (
+        <div className="p-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-semibold">Edit application</h1>
+                    <p className="mt-1 text-sm opacity-70">
+                        {app.company.name} · {app.roleTitle}
+                    </p>
+                </div>
+
+                <Link className="underline" href="/app/applications">
+                    Back
+                </Link>
+            </div>
+
+            <div className="mt-6 max-w-2xl">
+                <ApplicationForm
+                    mode="edit"
+                    appId={app.id}
+                    companies={companies}
+                    initial={{
+                        roleTitle: app.roleTitle,
+                        status: app.status as any,
+                        appliedAt: `${y}-${m}-${d}`,
+                        companyId: app.companyId,
+                        jobUrl: app.jobUrl ?? "",
+                        notes: app.notes ?? "",
+                        salaryMin: app.salaryMin?.toString() ?? "",
+                        salaryMax: app.salaryMax?.toString() ?? "",
+                    }}
+                />
+            </div>
+        </div>
+    );
 }
