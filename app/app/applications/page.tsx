@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import ApplicationsTable from "@/components/applications/applications-table";
 import type { Prisma } from "@/lib/generated/prisma/client";
 
@@ -24,6 +25,9 @@ const ALLOWED_STATUS = new Set([
     "Archived",
 ]);
 
+type Status = "" | "Draft" | "Applied" | "Interview" | "Offer" | "Rejected" | "Archived";
+type SortKey = "company" | "roleTitle" | "status" | "appliedAt" | "updatedAt";
+
 function parseIntSafe(v: string | undefined, fallback: number) {
     const n = Number(v);
     return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
@@ -40,11 +44,19 @@ export default async function Page({
     const sp = await Promise.resolve(searchParams);
 
     const q = (sp.q ?? "").trim();
-    const status = sp.status && ALLOWED_STATUS.has(sp.status) ? sp.status : "";
+    const status: Status =
+        sp.status && ALLOWED_STATUS.has(sp.status) ? (sp.status as Status) : "";
     const page = parseIntSafe(sp.page, 1);
     const pageSize = Math.min(parseIntSafe(sp.pageSize, 10), 50);
 
-    const sort = (sp.sort ?? "updatedAt").trim();
+    const sort: SortKey =
+        sp.sort === "company" ||
+            sp.sort === "roleTitle" ||
+            sp.sort === "status" ||
+            sp.sort === "appliedAt" ||
+            sp.sort === "updatedAt"
+            ? sp.sort
+            : "updatedAt";
     const dir: Prisma.SortOrder =
         (sp.dir ?? "").toLowerCase() === "asc" ? "asc" : "desc";
 
@@ -92,7 +104,7 @@ export default async function Page({
         prisma.application.count({ where }),
     ]);
 
-    const rows = items.map((a) => ({
+    const rows = items.map((a: (typeof items)[number]) => ({
         id: a.id,
         companyName: a.company?.name ?? "—",
         roleTitle: a.roleTitle,
@@ -102,8 +114,44 @@ export default async function Page({
         nextReminderAt: a.reminders?.[0]?.dueAt?.toISOString() ?? null,
     }));
 
+    const upcoming = await prisma.reminder.findMany({
+        where: { userId, done: false },
+        orderBy: { dueAt: "asc" },
+        take: 5,
+        include: {
+            application: { include: { company: true } },
+        },
+    });
+
     return (
         <div className="p-6">
+            {upcoming.length > 0 ? (
+                <div className="mb-6 rounded-lg border p-4">
+                    <div className="text-sm font-semibold">Upcoming reminders</div>
+                    <ul className="mt-3 space-y-2 text-sm">
+                        {upcoming.map((r: (typeof upcoming)[number]) => (
+                            <li key={r.id} className="flex items-center justify-between gap-3">
+                                <div className="min-w-0">
+                                    <div className="truncate">
+                                        {r.application.company?.name ?? "—"} · {r.application.roleTitle}
+                                    </div>
+                                    <div className="text-xs opacity-70">
+                                        {new Date(r.dueAt).toLocaleString()} · {r.type}
+                                    </div>
+                                </div>
+                                <Link className="underline" href={`/app/applications/${r.applicationId}`}>
+                                    Open
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) : (
+                <div className="mb-6 rounded-lg border p-4 text-sm opacity-70">
+                    No upcoming reminders.
+                </div>
+            )}
+
             <ApplicationsTable
                 userId={userId}
                 data={rows}

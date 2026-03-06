@@ -47,7 +47,20 @@ const BaseSchema = z
       !!(d.companyId && d.companyId.trim()) ||
       !!(d.newCompanyName && d.newCompanyName.trim()),
     { message: "Company is required", path: ["companyId"] }
-  );
+);
+  
+const ReminderTypeEnum = z.enum(["Email", "Call", "DM", "Other"]);
+
+const CreateReminderSchema = z.object({
+  applicationId: z.string().min(1),
+  dueAt: z.string().min(1),
+  type: ReminderTypeEnum.default("Email"),
+});
+
+const ToggleReminderSchema = z.object({
+  reminderId: z.string().min(1),
+  done: z.boolean(),
+});
 
 function parseDateYYYYMMDD(s: string) {
   const [y, m, d] = s.split("-").map(Number);
@@ -135,4 +148,55 @@ export async function updateApplication(id: string, input: unknown) {
   revalidatePath("/app/applications");
   revalidatePath(`/app/applications/${id}`);
   redirect(`/app/applications/${id}`);
+}
+
+
+
+async function requireUserId() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  return userId;
+}
+
+export async function createReminder(input: unknown) {
+  const userId = await requireUserId();
+  const data = CreateReminderSchema.parse(input);
+
+  const app = await prisma.application.findFirst({
+    where: { id: data.applicationId, userId },
+    select: { id: true },
+  });
+  if (!app) throw new Error("Application not found");
+
+  await prisma.reminder.create({
+    data: {
+      userId,
+      applicationId: data.applicationId,
+      dueAt: new Date(data.dueAt),
+      type: data.type,
+      done: false,
+    },
+  });
+
+  revalidatePath("/app/applications");
+  revalidatePath(`/app/applications/${data.applicationId}`);
+}
+
+export async function toggleReminderDone(input: unknown) {
+  const userId = await requireUserId();
+  const data = ToggleReminderSchema.parse(input);
+
+  const r = await prisma.reminder.findFirst({
+    where: { id: data.reminderId, userId },
+    select: { id: true, applicationId: true },
+  });
+  if (!r) throw new Error("Reminder not found");
+
+  await prisma.reminder.update({
+    where: { id: data.reminderId },
+    data: { done: data.done },
+  });
+
+  revalidatePath("/app/applications");
+  revalidatePath(`/app/applications/${r.applicationId}`);
 }

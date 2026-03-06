@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ApplicationForm from "@/components/applications/application-form";
+import RemindersPanel from "@/components/reminders/reminders-panel";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,10 @@ export default async function Page({
     const [app, companies] = await prisma.$transaction([
         prisma.application.findFirst({
             where: { id, userId },
-            include: { company: true },
+            include: {
+                company: true,
+                reminders: { orderBy: { dueAt: "asc" } },
+            },
         }),
         prisma.company.findMany({
             where: { userId },
@@ -75,6 +79,15 @@ export default async function Page({
                         salaryMin: app.salaryMin?.toString() ?? "",
                         salaryMax: app.salaryMax?.toString() ?? "",
                     }}
+                />
+                <RemindersPanel
+                    applicationId={app.id}
+                    reminders={app.reminders.map((r: { id: string; dueAt: Date; type: string; done: boolean }) => ({
+                        id: r.id,
+                        dueAt: r.dueAt.toISOString(),
+                        type: r.type as any,
+                        done: r.done,
+                    }))}
                 />
             </div>
         </div>
