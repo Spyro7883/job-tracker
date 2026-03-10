@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import CompanyForm from "@/components/companies/company-form";
 import Link from "next/link";
+import DeleteCompanyButton from "@/components/companies/delete-company-button";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,9 +24,10 @@ export default async function Page({
         <div className="p-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-xl font-semibold">Edit company</h1>
-                <Link className="underline" href="/app/companies">
-                    Back
-                </Link>
+                <div className="flex items-center gap-3">
+                    <DeleteCompanyButton id={company.id} />
+                    <Link className="underline" href="/app/companies">Back</Link>
+                </div>
             </div>
 
             <div className="mt-6 max-w-2xl">

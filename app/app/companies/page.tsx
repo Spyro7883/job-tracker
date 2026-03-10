@@ -66,7 +66,7 @@ export default async function Page({
                 </div>
             </div>
 
-            <div className="mt-6 rounded-lg border">
+            <div className="mt-6 rounded-lg border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -82,8 +82,13 @@ export default async function Page({
                     <TableBody>
                         {companies.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="py-10 text-center opacity-70">
-                                    No companies yet.
+                                <TableCell colSpan={6} className="py-10 text-center">
+                                    <div className="opacity-70">No companies yet.</div>
+                                    <div className="mt-3">
+                                        <Link href="/app/companies/new">
+                                            <Button>Add company</Button>
+                                        </Link>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : (

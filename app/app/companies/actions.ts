@@ -67,3 +67,19 @@ export async function updateCompany(id: string, input: unknown) {
   revalidatePath("/app/companies");
   redirect("/app/companies");
 }
+
+export async function deleteCompany(id: string) {
+  const userId = await requireUser();
+
+  const existing = await prisma.company.findFirst({
+    where: { id, userId },
+    select: { id: true },
+  });
+  if (!existing) throw new Error("Not found");
+
+  await prisma.company.delete({ where: { id } });
+
+  revalidatePath("/app/companies");
+  revalidatePath("/app/applications");
+  redirect("/app/companies");
+}

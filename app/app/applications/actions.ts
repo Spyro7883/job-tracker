@@ -200,3 +200,18 @@ export async function toggleReminderDone(input: unknown) {
   revalidatePath("/app/applications");
   revalidatePath(`/app/applications/${r.applicationId}`);
 }
+
+export async function deleteApplication(id: string) {
+  const userId = await requireUser();
+
+  const existing = await prisma.application.findFirst({
+    where: { id, userId },
+    select: { id: true },
+  });
+  if (!existing) throw new Error("Not found");
+
+  await prisma.application.delete({ where: { id } });
+
+  revalidatePath("/app/applications");
+  redirect("/app/applications");
+}

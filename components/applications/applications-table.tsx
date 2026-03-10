@@ -232,7 +232,7 @@ export default function ApplicationsTable(props: {
                 </div>
             </div>
 
-            <div className="rounded-lg border">
+            <div className="rounded-lg border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((hg) => (
@@ -249,8 +249,13 @@ export default function ApplicationsTable(props: {
                     <TableBody>
                         {props.data.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="py-10 text-center opacity-70">
-                                    No applications yet.
+                                <TableCell colSpan={columns.length} className="py-10 text-center">
+                                    <div className="opacity-70">No applications yet.</div>
+                                    <div className="mt-3">
+                                        <Button onClick={() => router.push("/app/applications/new")}>
+                                            Add application
+                                        </Button>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : (

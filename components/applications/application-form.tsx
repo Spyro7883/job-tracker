@@ -120,16 +120,18 @@ export default function ApplicationForm(props: {
             salaryMax: values.salaryMax || undefined,
         };
 
-        startTransition(async () => {
-            try {
-                if (props.mode === "create") {
-                    await createApplication(payload);
-                } else {
-                    await updateApplication(props.appId!, payload);
+        startTransition(() => {
+            void (async () => {
+                try {
+                    if (props.mode === "create") {
+                        await createApplication(payload);
+                    } else {
+                        await updateApplication(props.appId!, payload);
+                    }
+                } catch (e: any) {
+                    setError(e?.message ?? "Something went wrong");
                 }
-            } catch (e: any) {
-                setError(e?.message ?? "Something went wrong");
-            }
+            })();
         });
     }
 

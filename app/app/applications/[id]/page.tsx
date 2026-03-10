@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ApplicationForm from "@/components/applications/application-form";
 import RemindersPanel from "@/components/reminders/reminders-panel";
+import DeleteApplicationButton from "@/components/applications/delete-application-button";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,9 +60,10 @@ export default async function Page({
                     </p>
                 </div>
 
-                <Link className="underline" href="/app/applications">
-                    Back
-                </Link>
+                <div className="flex items-center gap-3">
+                    <DeleteApplicationButton id={app.id} />
+                    <Link className="underline" href="/app/applications">Back</Link>
+                </div>
             </div>
 
             <div className="mt-6 max-w-2xl">

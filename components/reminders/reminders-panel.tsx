@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { createReminder, toggleReminderDone } from "@/app/app/applications/actions";
+import { toast } from "sonner";
 
 type ReminderType = "Email" | "Call" | "DM" | "Other";
 
@@ -54,6 +55,7 @@ export default function RemindersPanel(props: {
                         type,
                         dueAt: new Date(dueAt).toISOString(),
                     });
+                    toast.success("Reminder added");
                     router.refresh();
                 } catch (e: any) {
                     setErr(e?.message ?? "Failed to create reminder");
@@ -69,6 +71,7 @@ export default function RemindersPanel(props: {
             void (async () => {
                 try {
                     await toggleReminderDone({ reminderId, done });
+                    toast.success(done ? "Marked as done" : "Marked as pending");
                     router.refresh();
                 } catch (e: any) {
                     setErr(e?.message ?? "Failed to update reminder");
