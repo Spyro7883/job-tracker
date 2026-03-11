@@ -9,9 +9,9 @@ export default async function Page() {
     if (!userId) return null;
 
     return (
-        <div className="p-6">
+        <div className="space-y-6">
             <h1 className="text-xl font-semibold">New company</h1>
-            <div className="mt-6 max-w-2xl">
+            <div className="max-w-2xl rounded-xl border border-white/10 bg-white/5 p-6">
                 <CompanyForm mode="create" />
             </div>
         </div>

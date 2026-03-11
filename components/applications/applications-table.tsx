@@ -232,7 +232,7 @@ export default function ApplicationsTable(props: {
                 </div>
             </div>
 
-            <div className="rounded-lg border overflow-x-auto">
+            <div className="rounded-xl border border-white/10 bg-white/5 overflow-x-auto overflow-hidden">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((hg) => (

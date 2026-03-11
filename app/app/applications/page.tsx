@@ -124,9 +124,9 @@ export default async function Page({
     });
 
     return (
-        <div className="p-6">
+        <div className="space-y-6">
             {upcoming.length > 0 ? (
-                <div className="mb-6 rounded-lg border p-4">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                     <div className="text-sm font-semibold">Upcoming reminders</div>
                     <ul className="mt-3 space-y-2 text-sm">
                         {upcoming.map((r: (typeof upcoming)[number]) => (
@@ -139,7 +139,7 @@ export default async function Page({
                                         {new Date(r.dueAt).toLocaleString()} · {r.type}
                                     </div>
                                 </div>
-                                <Link className="underline" href={`/app/applications/${r.applicationId}`}>
+                                <Link className="rounded-md border border-white/10 px-3 py-1 text-xs hover:bg-white/10" href={`/app/applications/${r.applicationId}`}>
                                     Open
                                 </Link>
                             </li>
@@ -147,7 +147,7 @@ export default async function Page({
                     </ul>
                 </div>
             ) : (
-                <div className="mb-6 rounded-lg border p-4 text-sm opacity-70">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm opacity-70">
                     No upcoming reminders.
                 </div>
             )}

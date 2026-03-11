@@ -40,7 +40,7 @@ export default async function Page({
     });
 
     return (
-        <div className="p-6">
+        <div className="space-y-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-xl font-semibold">Companies</h1>
@@ -66,7 +66,7 @@ export default async function Page({
                 </div>
             </div>
 
-            <div className="mt-6 rounded-lg border overflow-x-auto">
+            <div className="rounded-xl border border-white/10 bg-white/5 overflow-x-auto overflow-hidden">
                 <Table>
                     <TableHeader>
                         <TableRow>

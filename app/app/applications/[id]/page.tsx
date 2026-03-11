@@ -36,7 +36,7 @@ export default async function Page({
 
     if (!app) {
         return (
-            <div className="p-6">
+            <div className="space-y-6">
                 <p className="text-sm opacity-80">Not found.</p>
                 <Link className="underline" href="/app/applications">
                     Back
@@ -51,7 +51,7 @@ export default async function Page({
     const d = String(appliedAt.getUTCDate()).padStart(2, "0");
 
     return (
-        <div className="p-6">
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-semibold">Edit application</h1>
@@ -66,22 +66,24 @@ export default async function Page({
                 </div>
             </div>
 
-            <div className="mt-6 max-w-2xl">
-                <ApplicationForm
-                    mode="edit"
-                    appId={app.id}
-                    companies={companies}
-                    initial={{
-                        roleTitle: app.roleTitle,
-                        status: app.status as any,
-                        appliedAt: `${y}-${m}-${d}`,
-                        companyId: app.companyId,
-                        jobUrl: app.jobUrl ?? "",
-                        notes: app.notes ?? "",
-                        salaryMin: app.salaryMin?.toString() ?? "",
-                        salaryMax: app.salaryMax?.toString() ?? "",
-                    }}
-                />
+            <div className="max-w-2xl space-y-6">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <ApplicationForm
+                        mode="edit"
+                        appId={app.id}
+                        companies={companies}
+                        initial={{
+                            roleTitle: app.roleTitle,
+                            status: app.status as any,
+                            appliedAt: `${y}-${m}-${d}`,
+                            companyId: app.companyId,
+                            jobUrl: app.jobUrl ?? "",
+                            notes: app.notes ?? "",
+                            salaryMin: app.salaryMin?.toString() ?? "",
+                            salaryMax: app.salaryMax?.toString() ?? "",
+                        }}
+                    />
+                </div>
                 <RemindersPanel
                     applicationId={app.id}
                     reminders={app.reminders.map((r: { id: string; dueAt: Date; type: string; done: boolean }) => ({
