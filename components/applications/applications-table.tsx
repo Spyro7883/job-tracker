@@ -201,7 +201,6 @@ export default function ApplicationsTable(props: {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-xl font-semibold">Applications</h1>
-                    <div className="text-xs opacity-70">{props.userId}</div>
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -232,7 +231,7 @@ export default function ApplicationsTable(props: {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 overflow-x-auto overflow-hidden">
+            <div className="rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-white/5 overflow-x-auto overflow-hidden">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((hg) => (
@@ -262,7 +261,7 @@ export default function ApplicationsTable(props: {
                             table.getRowModel().rows.map((r) => (
                                 <TableRow
                                     key={r.id}
-                                    className="cursor-pointer hover:bg-white/5"
+                                    className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                                     onClick={() => router.push(`/app/applications/${r.original.id}`)}
                                 >
                                     {r.getVisibleCells().map((c) => (

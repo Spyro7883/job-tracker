@@ -19,7 +19,7 @@ export default async function Page() {
     return (
         <div className="space-y-6">
             <h1 className="text-xl font-semibold">New application</h1>
-            <div className="max-w-2xl rounded-xl border border-white/10 bg-white/5 p-6">
+            <div className="max-w-2xl rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-white/5">
                 <ApplicationForm mode="create" companies={companies} />
             </div>
         </div>

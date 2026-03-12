@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ApplicationsTable from "@/components/applications/applications-table";
 import type { Prisma } from "@/lib/generated/prisma/client";
+import { getUserIdOrNull } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,7 +39,7 @@ export default async function Page({
 }: {
     searchParams: SearchParams | Promise<SearchParams>;
 }) {
-    const { userId } = await auth();
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     const sp = await Promise.resolve(searchParams);
@@ -126,7 +127,7 @@ export default async function Page({
     return (
         <div className="space-y-6">
             {upcoming.length > 0 ? (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div className="rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-white/5">
                     <div className="text-sm font-semibold">Upcoming reminders</div>
                     <ul className="mt-3 space-y-2 text-sm">
                         {upcoming.map((r: (typeof upcoming)[number]) => (
@@ -139,7 +140,7 @@ export default async function Page({
                                         {new Date(r.dueAt).toLocaleString()} · {r.type}
                                     </div>
                                 </div>
-                                <Link className="rounded-md border border-white/10 px-3 py-1 text-xs hover:bg-white/10" href={`/app/applications/${r.applicationId}`}>
+                                <Link className="rounded-md border border-black/10 px-3 py-1 text-xs hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/10" href={`/app/applications/${r.applicationId}`}>
                                     Open
                                 </Link>
                             </li>

@@ -81,7 +81,7 @@ export default function RemindersPanel(props: {
     }
 
     return (
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+        <div className="rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-white/5">
             <h2 className="text-lg font-semibold">Reminders</h2>
 
             {err ? (
@@ -128,7 +128,7 @@ export default function RemindersPanel(props: {
                 ) : (
                     <ul className="space-y-2">
                         {props.reminders.map((r) => (
-                            <li key={r.id} className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 p-3">
+                            <li key={r.id} className="flex items-center justify-between gap-3 rounded-md border border-black/10 p-3 dark:border-white/10">
                                 <div className="min-w-0">
                                     <div className="truncate font-medium">
                                         {fmtDT(r.dueAt)} · {r.type}
