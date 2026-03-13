@@ -1,12 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdOrNull } from "@/lib/auth";
+
 import ApplicationForm from "@/components/applications/application-form";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-    const { userId } = await auth();
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     const companies = await prisma.company.findMany({

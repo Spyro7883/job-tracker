@@ -1,11 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
+import { getUserIdOrNull } from "@/lib/auth";
+
 import CompanyForm from "@/components/companies/company-form";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-    const { userId } = await auth();
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     return (

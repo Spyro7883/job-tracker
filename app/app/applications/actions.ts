@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireUserId } from "@/lib/auth";
 
 const StatusEnum = z.enum([
   "Draft",
@@ -67,14 +68,8 @@ function parseDateYYYYMMDD(s: string) {
   return new Date(Date.UTC(y, (m ?? 1) - 1, d ?? 1));
 }
 
-async function requireUser() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  return userId;
-}
-
 export async function createApplication(input: unknown) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
   const data = BaseSchema.parse(input);
 
   const company =
@@ -109,7 +104,7 @@ export async function createApplication(input: unknown) {
 }
 
 export async function updateApplication(id: string, input: unknown) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
   const data = BaseSchema.parse(input);
 
   const existing = await prisma.application.findFirst({
@@ -150,13 +145,6 @@ export async function updateApplication(id: string, input: unknown) {
   redirect(`/app/applications/${id}`);
 }
 
-
-
-async function requireUserId() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  return userId;
-}
 
 export async function createReminder(input: unknown) {
   const userId = await requireUserId();
@@ -202,7 +190,7 @@ export async function toggleReminderDone(input: unknown) {
 }
 
 export async function deleteApplication(id: string) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
 
   const existing = await prisma.application.findFirst({
     where: { id, userId },

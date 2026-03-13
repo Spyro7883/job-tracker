@@ -1,5 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdOrNull } from "@/lib/auth";
+
 import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,8 @@ export default async function Page({
 }: {
     searchParams: SearchParams | Promise<SearchParams>;
 }) {
-    const { userId } = await auth();
+
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     const sp = await Promise.resolve(searchParams);

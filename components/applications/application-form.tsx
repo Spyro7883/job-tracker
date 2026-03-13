@@ -144,8 +144,8 @@ export default function ApplicationForm(props: {
             ) : null}
 
             <div className="grid gap-2">
-                <Label>Role title</Label>
-                <Input {...form.register("roleTitle")} placeholder="Frontend Developer" />
+                <Label htmlFor="roleTitle">Role title</Label>
+                <Input id="roleTitle" {...form.register("roleTitle")} placeholder="Frontend Developer" />
                 {form.formState.errors.roleTitle ? (
                     <p className="text-xs text-red-400">{form.formState.errors.roleTitle.message}</p>
                 ) : null}

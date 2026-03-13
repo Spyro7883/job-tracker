@@ -1,5 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdOrNull } from "@/lib/auth";
+
 import CompanyForm from "@/components/companies/company-form";
 import Link from "next/link";
 import DeleteCompanyButton from "@/components/companies/delete-company-button";
@@ -14,7 +15,7 @@ export default async function Page({
 }) {
     const { id } = await Promise.resolve(params);
 
-    const { userId } = await auth();
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     const company = await prisma.company.findFirst({ where: { id, userId } });

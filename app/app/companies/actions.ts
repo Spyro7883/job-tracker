@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireUserId } from "@/lib/auth";
 
 const CompanySchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -17,14 +18,8 @@ const CompanySchema = z.object({
   notes: z.string().trim().optional(),
 });
 
-async function requireUser() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  return userId;
-}
-
 export async function createCompany(input: unknown) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
   const data = CompanySchema.parse(input);
 
   await prisma.company.upsert({
@@ -48,7 +43,7 @@ export async function createCompany(input: unknown) {
 }
 
 export async function updateCompany(id: string, input: unknown) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
   const data = CompanySchema.parse(input);
 
   const existing = await prisma.company.findFirst({ where: { id, userId } });
@@ -69,7 +64,7 @@ export async function updateCompany(id: string, input: unknown) {
 }
 
 export async function deleteCompany(id: string) {
-  const userId = await requireUser();
+  const userId = await requireUserId();
 
   const existing = await prisma.company.findFirst({
     where: { id, userId },

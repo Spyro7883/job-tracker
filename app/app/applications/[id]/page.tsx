@@ -1,5 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdOrNull } from "@/lib/auth";
+
 import Link from "next/link";
 import ApplicationForm from "@/components/applications/application-form";
 import RemindersPanel from "@/components/reminders/reminders-panel";
@@ -15,7 +16,7 @@ export default async function Page({
 }) {
     const { id } = await Promise.resolve(params);
 
-    const { userId } = await auth();
+    const userId = await getUserIdOrNull();
     if (!userId) return null;
 
     const [app, companies] = await prisma.$transaction([
