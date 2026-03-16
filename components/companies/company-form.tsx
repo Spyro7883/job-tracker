@@ -66,29 +66,30 @@ export default function CompanyForm(props: {
       ) : null}
 
       <div className="grid gap-2">
-        <Label>Name</Label>
-        <Input {...form.register("name")} placeholder="Demo Co" />
+        <Label htmlFor="name">Name</Label>
+        <Input id="name" {...form.register("name")} placeholder="Demo Co" />
         <p className="min-h-4 text-xs text-red-400">
           {form.formState.errors.name?.message ?? ""}
         </p>
       </div>
 
       <div className="grid gap-2">
-        <Label>Website (optional)</Label>
-        <Input {...form.register("website")} placeholder="https://..." />
+        <Label htmlFor="website">Website (optional)</Label>
+        <Input id="website" {...form.register("website")} placeholder="https://..." />
         <p className="min-h-4 text-xs text-red-400">
           {form.formState.errors.website?.message ?? ""}
         </p>
       </div>
 
       <div className="grid gap-2">
-        <Label>Location (optional)</Label>
-        <Input {...form.register("location")} placeholder="Bucharest" />
+        <Label htmlFor="location">Location (optional)</Label>
+        <Input id="location" {...form.register("location")} placeholder="Bucharest" />
       </div>
 
       <div className="grid gap-2">
-        <Label>Notes (optional)</Label>
+        <Label htmlFor="notes">Notes (optional)</Label>
         <textarea
+          id="notes"
           className="min-h-24 rounded-md border bg-transparent p-3 text-sm"
           {...form.register("notes")}
         />
