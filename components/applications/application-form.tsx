@@ -23,7 +23,7 @@ const StatusEnum = z.enum([
 const FormSchema = z
     .object({
         roleTitle: z.string().min(2, "Role is required"),
-        status: StatusEnum.default("Applied"),
+        status: StatusEnum,
         appliedAt: z.string().min(1, "Applied date is required"),
         companyId: z.string().optional(),
         newCompanyName: z.string().optional(),
