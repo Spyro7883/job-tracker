@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteApplication } from "@/app/app/applications/actions";
@@ -19,10 +18,9 @@ export default function DeleteApplicationButton(props: { id: string }) {
             void (async () => {
                 try {
                     await deleteApplication(props.id);
-                    // redirect-ul din action se ocupă de navigare
+                    router.push("/app/applications");
                 } catch (e: any) {
                     setErr(e?.message ?? "Failed to delete");
-                    router.refresh();
                 }
             })();
         });

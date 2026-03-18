@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCompany, updateCompany } from "@/app/app/companies/actions";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,8 @@ export default function CompanyForm(props: {
   const [pending, startTransition] = useTransition();
   const [err, setErr] = useState<string | null>(null);
 
+  const router = useRouter();
+
   const form = useForm<Values>({
     resolver: zodResolver(Schema),
     mode: "onChange",
@@ -48,8 +51,12 @@ export default function CompanyForm(props: {
     startTransition(() => {
       void (async () => {
         try {
-          if (props.mode === "create") await createCompany(values);
-          else await updateCompany(props.companyId!, values);
+          const result =
+            props.mode === "create"
+              ? await createCompany(values)
+              : await updateCompany(props.companyId!, values);
+
+          router.push(`/app/companies/${result.id}`);
         } catch (e: any) {
           setErr(e?.message ?? "Something went wrong");
         }

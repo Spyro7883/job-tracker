@@ -1,10 +1,8 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireUserId } from "@/lib/auth";
 
 const StatusEnum = z.enum([
@@ -100,7 +98,7 @@ export async function createApplication(input: unknown) {
   });
 
   revalidatePath("/app/applications");
-  redirect(`/app/applications/${app.id}`);
+  return { id: app.id };
 }
 
 export async function updateApplication(id: string, input: unknown) {
@@ -142,7 +140,7 @@ export async function updateApplication(id: string, input: unknown) {
 
   revalidatePath("/app/applications");
   revalidatePath(`/app/applications/${id}`);
-  redirect(`/app/applications/${id}`);
+  return { id };
 }
 
 
@@ -201,5 +199,5 @@ export async function deleteApplication(id: string) {
   await prisma.application.delete({ where: { id } });
 
   revalidatePath("/app/applications");
-  redirect("/app/applications");
+  return { ok: true };
 }

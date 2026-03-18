@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createApplication, updateApplication } from "@/app/app/applications/actions";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +81,8 @@ export default function ApplicationForm(props: {
     const [pending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
 
+    const router = useRouter();
+
     const companyOptions = useMemo(
         () => [{ id: "__new", name: "+ Add new company" }, ...props.companies],
         [props.companies]
@@ -123,11 +126,11 @@ export default function ApplicationForm(props: {
         startTransition(() => {
             void (async () => {
                 try {
-                    if (props.mode === "create") {
-                        await createApplication(payload);
-                    } else {
-                        await updateApplication(props.appId!, payload);
-                    }
+                    const result =
+                        props.mode === "create"
+                            ? await createApplication(payload)
+                            : await updateApplication(props.appId!, payload);
+                    router.push(`/app/applications/${result.id}`);
                 } catch (e: any) {
                     setError(e?.message ?? "Something went wrong");
                 }

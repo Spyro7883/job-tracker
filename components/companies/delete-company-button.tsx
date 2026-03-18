@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteCompany } from "@/app/app/companies/actions";
@@ -19,9 +18,9 @@ export default function DeleteCompanyButton(props: { id: string }) {
             void (async () => {
                 try {
                     await deleteCompany(props.id);
+                    router.push("/app/companies");
                 } catch (e: any) {
                     setErr(e?.message ?? "Failed to delete");
-                    router.refresh();
                 }
             })();
         });
